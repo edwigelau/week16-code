@@ -5,7 +5,7 @@ pipeline {
     }
     stages{
         stage('sonarqube scan'){
-           agent {docker { image 'maven:3-amazoncorretto-17-debian' }} 
+        agent {docker { image 'maven:3-amazoncorretto-17-debian' }} 
             steps{
                 withSonarQubeEnv('sonarserver'){ 
               sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=edwigelau_week16-code'
@@ -18,6 +18,11 @@ pipeline {
                 sh 'mvn clean test compile install package'
             }
         }
-        
+        stage('upload artifact'){
+            steps{
+                sh 'curl -uadmin:APMVLLh67hUR9Vz8froNCeT1ip -T target/bio*.jar \
+                "http://54.237.211.225:8081/artifactory/geoapp/"'
+            }
+        }
     }
 }
